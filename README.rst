@@ -3,6 +3,8 @@ timak
 
 timak is a Python library for storing timelines (activity streams) in Riak. It is very alpha and rough around the edges.
 
+It is loosely based on my understanding of Yammer's `Streamie <http://blog.basho.com/2011/03/28/Riak-and-Scala-at-Yammer/>`_.
+
 Example
 -------
 
