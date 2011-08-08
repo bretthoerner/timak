@@ -49,7 +49,9 @@ class Timeline(object):
         """
         Coerces a list of timeline objects into the data the user cares about.
         """
-        return [o.get('data', None) or o.get('id') for o in l]
+        return [o.get('data', None) or o.get('id')
+                for o in l
+                if not o.get('deleted', False)]
 
     def _get_obj_and_data(self, key, write_merged=True):
         """
@@ -94,32 +96,34 @@ class Timeline(object):
             return result
         return self._list_to_data(result)
 
-    def op(self, key, uniq_ident, obj_datetime, obj_data=None, action='add'):
-        now = self._datetime_to_js(datetime.datetime.utcnow())
-        obj, data = self._get_obj_and_data(key, write_merged=False)
+    def _make_op(action):
+        assert action in ('add', 'delete')
+        def _op(self, key, uniq_ident, obj_datetime, obj_data=None, raw=False):
+            now = self._datetime_to_js(datetime.datetime.utcnow())
+            obj, data = self._get_obj_and_data(key, write_merged=False)
 
-        new_item = {'id': uniq_ident,
-                    'timestamp': self._datetime_to_js(obj_datetime),
-                    'modified': now}
-        if obj_data:
-            new_item['data'] = obj_data
-        if action == 'delete':
-            new_item['deleted'] = True
+            new_item = {'id': uniq_ident,
+                        'timestamp': self._datetime_to_js(obj_datetime),
+                        'modified': now}
+            if obj_data:
+                new_item['data'] = obj_data
+            if action == 'delete':
+                new_item['deleted'] = True
 
-        existing = data.get(uniq_ident, None)
-        if existing:
-            if existing['modified'] < now:
+            existing = data.get(uniq_ident, None)
+            if existing:
+                if existing['modified'] < now:
+                    data[uniq_ident] = new_item
+            else:
                 data[uniq_ident] = new_item
-        else:
-            data[uniq_ident] = new_item
 
-        timeline = self._dict_to_list(data)[:self.max_items]
-        obj.set_data(timeline)
-        obj.store()
-        return self._list_to_data(timeline)
+            timeline = self._dict_to_list(data)[:self.max_items]
+            obj.set_data(timeline)
+            obj.store()
+            if raw:
+                return timeline
+            return self._list_to_data(timeline)
+        return _op
 
-    def add(self, key, uniq_ident, obj_datetime, obj_data=None):
-        return self.op(key, uniq_ident, obj_datetime, obj_data=obj_data)
-
-    def delete(self, key, uniq_ident, obj_datetime, obj_data=None):
-        return self.op(key, uniq_ident, obj_datetime, obj_data=obj_data, action='delete')
+    add = _make_op("add")
+    delete = _make_op("delete")
