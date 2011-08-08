@@ -45,6 +45,12 @@ class Timeline(object):
         l.sort(key=lambda x: x['timestamp'], reverse=reverse)
         return l
 
+    def _list_to_data(self, l):
+        """
+        Coerces a list of timeline objects into the data the user cares about.
+        """
+        return [o.get('data', None) or o.get('id') for o in l]
+
     def _get_obj_and_data(self, key, write_merged=True):
         """
         Returns RiakObject with proper vclock set and dictionary of merged entries.
@@ -77,13 +83,16 @@ class Timeline(object):
 
         return obj, resolved_data
 
-    def get(self, key):
+    def get(self, key, raw=False):
         """
         Returns timeline as list.
         """
         # TODO: Optimize this so we don't have to coerce
         # list->dict->list for the common case.
-        return self._dict_to_list(self._get_obj_and_data(key)[1])
+        result = self._dict_to_list(self._get_obj_and_data(key)[1])
+        if raw:
+            return result
+        return self._list_to_data(result)
 
     def op(self, key, uniq_ident, obj_datetime, obj_data=None, action='add'):
         now = self._datetime_to_js(datetime.datetime.utcnow())
@@ -107,7 +116,7 @@ class Timeline(object):
         timeline = self._dict_to_list(data)[:self.max_items]
         obj.set_data(timeline)
         obj.store()
-        return timeline
+        return self._list_to_data(timeline)
 
     def add(self, key, uniq_ident, obj_datetime, obj_data=None):
         return self.op(key, uniq_ident, obj_datetime, obj_data=obj_data)
