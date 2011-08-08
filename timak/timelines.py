@@ -15,7 +15,7 @@ class Timeline(object):
     def get_bucket(self):
         return self.connection.bucket(self.bucket)
 
-    def _datetime_to_js(dt):
+    def _datetime_to_js(self, dt):
         return int(dt.strftime("%s") + dt.strftime("%f")[:3])
 
     def _merge_two(self, obj1, obj2):
@@ -85,15 +85,15 @@ class Timeline(object):
         # list->dict->list for the common case.
         return self._dict_to_list(self._get_obj_and_data(key)[1])
 
-    def op(self, key, uniq_ident, obj_datetime, data=None, action='add'):
+    def op(self, key, uniq_ident, obj_datetime, obj_data=None, action='add'):
         now = self._datetime_to_js(datetime.datetime.utcnow())
         obj, data = self._get_obj_and_data(key, write_merged=False)
 
         new_item = {'id': uniq_ident,
                     'timestamp': self._datetime_to_js(obj_datetime),
                     'modified': now}
-        if data:
-            new_item['data'] = data
+        if obj_data:
+            new_item['data'] = obj_data
         if action == 'delete':
             new_item['deleted'] = True
 
@@ -109,8 +109,8 @@ class Timeline(object):
         obj.store()
         return timeline
 
-    def add(self, key, uniq_ident, obj_datetime, data=None):
-        return self.op(key, uniq_ident, obj_datetime, data=data)
+    def add(self, key, uniq_ident, obj_datetime, obj_data=None):
+        return self.op(key, uniq_ident, obj_datetime, obj_data=obj_data)
 
-    def delete(self, key, uniq_ident, obj_datetime, data=None):
-        return self.op(key, uniq_ident, obj_datetime, data=data, action='delete')
+    def delete(self, key, uniq_ident, obj_datetime, obj_data=None):
+        return self.op(key, uniq_ident, obj_datetime, obj_data=obj_data, action='delete')
