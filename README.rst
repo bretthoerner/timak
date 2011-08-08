@@ -40,6 +40,8 @@ TODO
 
 1. Explain why this is special.
 2. Go into drawbacks.
-3. Add better API with cursors (last seen obj_date?) for pagination.
+3. Add better API with cursors (last seen ``obj_date``?) for pagination.
 4. Built-in Django support for update on ``post_save`` and ``post_delete``.
 5. Tests, tests, tests.
+6. Compress values.
+
