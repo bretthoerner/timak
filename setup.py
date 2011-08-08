@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(name='timak',
     version=".".join(map(str, __import__("timak").__version__)),
-    description='Timelines in by Riak',
+    description='Timelines (activity streams) backed by Riak',
     author='Brett Hoerner',
     author_email='brett@bretthoerner.com',
     url='http://github.com/bretthoerner/timak',
