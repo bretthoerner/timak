@@ -9,7 +9,7 @@ It is loosely based on my understanding of Yammer's `Streamie <http://blog.basho
 Example
 -------
 
-Timelines are unique sets of objects (unique by the ID you provide) ordered by a datetime (that you also provide). They are bounded, so items fall of the end when a (user defined) capacity is reached.
+Timelines are unique sets of objects (unique by the ID you provide) ordered by a datetime (that you also provide). They are bounded, so items fall off the end when a (user defined) capacity is reached.
 
     >>> from datetime import datetime
     >>> import riak
