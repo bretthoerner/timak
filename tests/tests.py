@@ -39,7 +39,7 @@ class TimakTest(unittest2.TestCase):
         """
         Verify items > max_items are removed.
         """
-        timeline = Timeline(connection=self.c1, max_items=3)
+        timeline = Timeline(connection=self.c1, bucket=self.bucket, max_items=3)
         now = datetime.utcnow()
 
         timeline.add(self.key, 1, now)
