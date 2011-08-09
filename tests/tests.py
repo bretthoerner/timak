@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 import unittest2
 
 import riak
@@ -60,3 +60,14 @@ class TimakTest(unittest2.TestCase):
 
         timeline.delete(self.key, 1, now)
         self.assertEqual(len(timeline.get(self.key)), 0)
+
+    def test_multi_writers(self):
+        now = datetime.utcnow()
+
+        t1 = Timeline(connection=self.c1, bucket=self.bucket, max_items=10)
+        t2 = Timeline(connection=self.c2, bucket=self.bucket, max_items=10)
+
+        t1.add(self.key, 1, now)
+        t2.add(self.key, 2, now + timedelta(minutes=1))
+
+        self.assertEqual(t1.get(self.key), [2, 1])

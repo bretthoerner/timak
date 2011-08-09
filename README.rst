@@ -38,7 +38,7 @@ As you can see the default order is descending by the date you provide, and the 
 Why?
 ----
 
-I needed *highly available*, *linearly scalable* timelines where readers and writers *don't block* one another. Because Riak is a Dynamo system, multiple writers can update a single value and I can merge the conflicts on a later read. I can also add a machine to the cluster for more throughput, and since it's simply fetching denormalized timelines by key it should be incredibly performant.
+I needed *highly available*, *linearly scalable* timelines where readers and writers *don't block* one another. Because Riak is a Dynamo based system, multiple writers can update a single value and I can merge the conflicts on a later read. I can also add a machine to the cluster for more throughput, and since it's simply fetching denormalized timelines by key it should be incredibly performant.
 
 So what? I could write this in...
 ---------------------------------
@@ -61,7 +61,7 @@ You can fake timelines in Redis using a list or sorted set. Like RDBMS you have 
 Cassandra
 `````````
 
-Probably another great fit. You could even store much longer timelines, though I'm not sure what the cost is of going an ORDER_BY/OFFSET equivalent on the columns in a Cassandra row.
+Probably another great fit. You could even store much longer timelines, though I'm not sure what the cost is of doing an ORDER_BY/OFFSET equivalent on the columns in a Cassandra row.
 
 
 TODO
@@ -69,6 +69,5 @@ TODO
 
 1. Add better API with cursors (last seen ``obj_date``?) for pagination.
 2. Built-in Django support for update on ``post_save`` and ``post_delete``.
-3. Tests, tests, tests.
-4. Compress values.
+3. Compress values.
 
