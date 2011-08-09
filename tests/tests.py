@@ -49,3 +49,13 @@ class TimakTest(unittest2.TestCase):
 
         timeline.add(self.key, 4, now)
         self.assertEqual(len(timeline.get(self.key)), 3)
+
+    def test_delete(self):
+        timeline = Timeline(connection=self.c1, bucket=self.bucket, max_items=3)
+        now = datetime.utcnow()
+
+        timeline.add(self.key, 1, now)
+        self.assertEqual(len(timeline.get(self.key)), 1)
+
+        timeline.delete(self.key, 1, now)
+        self.assertEqual(len(timeline.get(self.key)), 0)

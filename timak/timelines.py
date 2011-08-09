@@ -29,7 +29,7 @@ class Timeline(object):
                    < obj2[uniq_ident]['modified']):
                 obj1[uniq_ident] = obj2[uniq_ident]
 
-        return self._dict_to_list(obj1)
+        return obj1 # self._dict_to_list(obj1)
 
     def _list_to_dict(self, l):
         if not l: return {}
