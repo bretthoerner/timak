@@ -38,7 +38,7 @@ As you can see the default order is descending by the date you provide, and the 
 Why?
 ----
 
-I needed *highly available*, *linearly scalable* timelines. Because Riak is a Dynamo system, multiple writers can update a single value and I can merge the conflicts on a later read. I can also add a machine to the cluster for more throughput, and since it's simply fetching denormalized timelines by key it should be incredibly performant.
+I needed *highly available*, *linearly scalable* timelines where readers and writers *don't block* one another. Because Riak is a Dynamo system, multiple writers can update a single value and I can merge the conflicts on a later read. I can also add a machine to the cluster for more throughput, and since it's simply fetching denormalized timelines by key it should be incredibly performant.
 
 So what? I could write this in...
 ---------------------------------
