@@ -1,3 +1,4 @@
+=====
 timak
 =====
 
@@ -34,14 +35,40 @@ As you can see the default order is descending by the date you provide, and the 
    >>> tl.add("brett:tweets", 5, datetime(2011, 1, 5), obj_data={'body': 'Hello world, this is my first tweet'})
    [{'body': 'Hello world, this is my first tweet'}, 4, 3]
 
+Why?
+----
+
+I needed *highly available*, *linearly scalable* timelines. Because Riak is a Dynamo system, multiple writers can update a single value and I can merge the conflicts on a later read. I can also add a machine to the cluster for more throughput, and since it's simply fetching denormalized timelines by key it should be incredibly performant.
+
+So what? I could write this in...
+---------------------------------
+
+PostgreSQL or MySQL
+```````````````````
+
+This would be a very simple table in a RDBMS. It could even be boundless (though without some PLSQL hackery large OFFSETS are very expensive). You'd be hitting large indexes instead of fetching values directly by key. The biggest problem is it all has to fit on a single system, unless you manually shard the data (and re-shard if you ever grew out of that size). Plus you'd have to deal with availability using read slaves and failover.
+
+MongoDB
+```````
+
+The only possible difference I see from the RDBMSs above is that you could use auto-sharding. If that's your thing, and you trust it, then it may work fine for this.
+
+Redis
+`````
+
+You can fake timelines in Redis using a list or sorted set. Like RDBMS you have to handle all of the sharding yourself, re-shard on growth, and use slaves and failaover for availability. In addition to these, and even more critical for my use case: all of your timelines would have to fit in RAM. If you have this problem and that kind of money please send me some.
+
+Cassandra
+`````````
+
+Probably another great fit. You could even store much longer timelines, though I'm not sure what the cost is of going an ORDER_BY/OFFSET equivalent on the columns in a Cassandra row.
+
 
 TODO
 ----
 
-1. Explain why this is special.
-2. Go into drawbacks.
-3. Add better API with cursors (last seen ``obj_date``?) for pagination.
-4. Built-in Django support for update on ``post_save`` and ``post_delete``.
-5. Tests, tests, tests.
-6. Compress values.
+1. Add better API with cursors (last seen ``obj_date``?) for pagination.
+2. Built-in Django support for update on ``post_save`` and ``post_delete``.
+3. Tests, tests, tests.
+4. Compress values.
 
