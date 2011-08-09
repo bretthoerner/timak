@@ -30,7 +30,7 @@ Timelines are unique sets of objects (unique by the ID you provide) ordered by a
     >>> tl.delete("brett:tweets", 2, datetime(2011, 1, 2))
     [4, 3]
 
-As you can see the default order is descending by the date you provide, and the object IDs are returned by default. You can also provide an ``obj_data`` argument (JSON serializable) which will be returned instead.
+As you can see the default order is descending by the date you provide, and the object IDs are returned by default. You can also provide an ``obj_data`` argument (must be JSON serializable) which will be returned instead.
 
    >>> tl.add("brett:tweets", 5, datetime(2011, 1, 5), obj_data={'body': 'Hello world, this is my first tweet'})
    [{'body': 'Hello world, this is my first tweet'}, 4, 3]
@@ -46,23 +46,22 @@ So what? I could write this in...
 PostgreSQL or MySQL
 ```````````````````
 
-This would be a very simple table in a RDBMS. It could even be boundless (though without some PLSQL hackery large OFFSETS are very expensive). You'd be hitting large indexes instead of fetching values directly by key. The biggest problem is it all has to fit on a single system, unless you manually shard the data (and re-shard if you ever grew out of that size). Plus you'd have to deal with availability using read slaves and failover.
+This would be a very simple table in a RDBMS. It could even be boundless (though without some PLSQL hackery large ``OFFSETS`` are very expensive). You'd be hitting large indexes instead of fetching values directly by key. The biggest problem is it all has to fit on a single system, unless you manually shard the data (and re-shard if you ever grew out of that size). Plus you'd have to deal with availability using read slaves and failover.
 
 MongoDB
 ```````
 
-The only possible difference I see from the RDBMSs above is that you could use auto-sharding. If that's your thing, and you trust it, then it may work fine for this.
+The only possible difference I see from the RDBMSs above is that you could use Mongo's "auto-sharding." If that's your thing, and you trust it, then I wish you the best of luck. You may want to `read this <http://www.allthingsdistributed.com/2007/10/amazons_dynamo.html>`_.
 
 Redis
 `````
 
-You can fake timelines in Redis using a list or sorted set. Like RDBMS you have to handle all of the sharding yourself, re-shard on growth, and use slaves and failaover for availability. In addition to these, and even more critical for my use case: all of your timelines would have to fit in RAM. If you have this problem and that kind of money please send me some.
+You can fake timelines in Redis using a list or sorted set. Like RDBMS you have to handle all of the sharding yourself, re-shard on growth, and use slaves and failover for availability. In addition to these, and even more critical for my use case: all of your timelines would have to fit in RAM. If you have this problem and that kind of money please send me some.
 
 Cassandra
 `````````
 
-Probably another great fit. You could even store much longer timelines, though I'm not sure what the cost is of doing an ORDER_BY/OFFSET equivalent on the columns in a Cassandra row.
-
+Probably another great fit. You could even store much longer timelines, though I'm not sure what the cost is of doing a ``SELECT`` with ``OFFSET`` equivalent on the columns in a Cassandra row.
 
 TODO
 ----
@@ -70,4 +69,3 @@ TODO
 1. Add better API with cursors (last seen ``obj_date``?) for pagination.
 2. Built-in Django support for update on ``post_save`` and ``post_delete``.
 3. Compress values.
-
