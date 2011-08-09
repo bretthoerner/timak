@@ -33,7 +33,8 @@ class TimakTest(unittest2.TestCase):
         o2.store()
 
         conflicted = self.b1.get(self.key)
-        self.assertEqual(conflicted.get_sibling_count(), 2)
+        siblings = filter(bool, (s.get_data() for s in conflicted.get_siblings()))
+        self.assertEqual(len(siblings), 2)
 
     def test_max_items(self):
         """
