@@ -42,7 +42,7 @@ class Timeline(object):
         if not d: return []
         l = d.values()
         reverse = self.order == 'desc'
-        l.sort(key=lambda x: x['timestamp'], reverse=reverse)
+        l.sort(key=lambda x: x['score'], reverse=reverse)
         return l
 
     def _list_to_data(self, l):
@@ -98,12 +98,15 @@ class Timeline(object):
 
     def _make_op(action):
         assert action in ('add', 'delete')
-        def _op(self, key, uniq_ident, obj_datetime, obj_data=None, raw=False):
+        def _op(self, key, uniq_ident, obj_score, obj_data=None, raw=False):
             now = self._datetime_to_js(datetime.datetime.utcnow())
             obj, data = self._get_obj_and_data(key, write_merged=False)
 
+            if isinstance(obj_score, datetime.datetime):
+                obj_score = self._datetime_to_js(obj_score)
+
             new_item = {'id': uniq_ident,
-                        'timestamp': self._datetime_to_js(obj_datetime),
+                        'score': obj_score,
                         'modified': now}
             if obj_data:
                 new_item['data'] = obj_data

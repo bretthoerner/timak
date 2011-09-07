@@ -19,6 +19,7 @@ Timelines are unique sets of objects (unique by the ID you provide) ordered by a
 
     >>> tl = Timeline(connection=conn, max_items=3)
 
+    >>> # t1.add("key", "unique_id", "score")
     >>> tl.add("brett:tweets", 1, datetime(2011, 1, 1))
     [1]
     >>> tl.add("brett:tweets", 2, datetime(2011, 1, 2))
@@ -29,6 +30,8 @@ Timelines are unique sets of objects (unique by the ID you provide) ordered by a
     [4, 3, 2]
     >>> tl.delete("brett:tweets", 2, datetime(2011, 1, 2))
     [4, 3]
+
+If you provide a ``datetime.datetime`` value to score Timak will automatically convert to a sortable score value.
 
 As you can see the default order is descending by the date you provide, and the object IDs are returned by default. You can also provide an ``obj_data`` argument (must be JSON serializable) which will be returned instead.
 
