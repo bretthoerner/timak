@@ -1,6 +1,9 @@
 from __future__ import absolute_import
 
+import pkg_resources
+
 from .timelines import Timeline
 
 
-__version__ = (0, 0, 0)
+VERSION = tuple(map(int, pkg_resources.get_distribution('timak').version.split('.')))
+__version__ = VERSION

@@ -1,7 +1,11 @@
 from setuptools import setup, find_packages
 
+
+version = "0.1.0"
+
+
 setup(name='timak',
-    version=".".join(map(str, __import__("timak").__version__)),
+    version=version,
     description='Timelines (activity streams) backed by Riak',
     author='Brett Hoerner',
     author_email='brett@bretthoerner.com',
