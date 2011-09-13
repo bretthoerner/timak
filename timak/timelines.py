@@ -67,6 +67,10 @@ class Timeline(object):
                 in obj.get_siblings()
                 if o.get_data() is not None]
 
+        obj_data = obj.get_data()
+        if obj_data is not None:
+            data.append(self._list_to_dict(obj_data))
+
         # if we have no data or only 1 sibling we can safetly return
         # it without merging
         if len(data) == 0:
