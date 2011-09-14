@@ -81,11 +81,14 @@ class Timeline(object):
         resolved_data = reduce(self._merge_two, data)
         # NOTE: is this really the only way to fix a conflict in the
         # python riak library?
-        obj._vclock = obj.get_sibling(0).vclock()
-
-        if write_merged:
-            obj.set_data(self._dict_to_list(resolved_data)[:self.max_items])
-            obj.store()
+        try:
+            obj._vclock = obj.get_sibling(0).vclock()
+        except IndexError:
+            pass
+        else:
+            if write_merged:
+                obj.set_data(self._dict_to_list(resolved_data)[:self.max_items])
+                obj.store()
 
         return obj, resolved_data
 
